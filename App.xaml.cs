@@ -2,6 +2,7 @@
 using System.Data;
 using System.Windows;
 
+
 namespace Smoke_Less_2024
 {
     /// <summary>
@@ -9,6 +10,7 @@ namespace Smoke_Less_2024
     /// </summary>
     public partial class App : Application
     {
+
     }
 
 }

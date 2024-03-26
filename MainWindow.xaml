@@ -5,29 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         xmlns:local="clr-namespace:Smoke_Less_2024"
+        Icon="pack://siteoforigin:,,,/cute heart beating.ico"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800" Background="SkyBlue">
+        Title="MainWindow" ResizeMode="NoResize" Height="480" Width="800"
+        Background="black">
     <Grid Loaded="MainWindow_Loaded">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="4*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
-        </Grid.RowDefinitions>
-
-        <Image Grid.Column="0" Grid.Row="1" gif:ImageBehavior.AnimatedSource="pack://siteoforigin:,,,/happy lungs.gif" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Column ="1" Grid.Row ="1" Visibility="Hidden" x:Name="ResultBlock" Margin="38,10,0,328" FontSize="20" TextWrapping="Wrap" Width="270" HorizontalAlignment="Left" RenderTransformOrigin="1.826,-6.599"/>
-        <TextBlock Grid.Column="1" Visibility="Hidden" HorizontalAlignment="Left" x:Name="ResultBlock2" Margin="38,50,0,0" Grid.Row="1" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top"/>
-        <TextBlock Grid.Column="1" Visibility="Hidden" HorizontalAlignment="Left" x:Name="ResultBlock3" Margin="38,90,0,0" Grid.Row="1" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Height="105"/>
-        <Button x:Name="add" Grid.Column="0" HorizontalAlignment="Center" Margin="0,24,0,0" Grid.Row="2" VerticalAlignment="Top" Height="39" Width="172" Click="add_Click">
-            <Image Source="pack://siteoforigin:,,,/cigarette click.png" Height="30" Width="100"/>
-        </Button>
-        <Button x:Name="stats" Grid.Column="1" HorizontalAlignment="Left" Margin="38,15,0,23" Width="71" Click="Button_Click">
-            <Image Source="pack://siteoforigin:,,,/lighter click.png" Height="53" Width="47"/>
-        </Button>
-        
+        <Image x:Name="Gif" Source="pack://siteoforigin:,,,/cute heart beating.gif" Margin="0,0,0,0" Opacity="0.5"/>
+        <Slider x:Name="Count_sld" HorizontalAlignment="Center" Margin="0,425,0,0" VerticalAlignment="Top" Width="592" Height="29" Maximum="25" SmallChange="1" TickPlacement="TopLeft" AutoToolTipPlacement="TopLeft" FontFamily="Impact" Cursor="Hand"/>
+        <Canvas Margin="72,62,52,65" Background="transparent"/>
     </Grid>
 </Window>
