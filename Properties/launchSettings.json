@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "Smoke Less 2024": {
+    "SLSM": {
       "commandName": "Project",
-      "workingDirectory": "C:\\Users\\Public\\Documents\\WPF\\Smoke Less 2024\\bin\\Debug"
+      "workingDirectory": "C:\\Users\\Public\\Documents\\WPF\\SLSM\\bin\\Debug"
     }
   }
 }

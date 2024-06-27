@@ -3,7 +3,7 @@ using System.Data;
 using System.Windows;
 
 
-namespace Smoke_Less_2024
+namespace SLSM
 {
     /// <summary>
     /// Interaction logic for App.xaml

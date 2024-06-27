@@ -1,4 +1,7 @@
-﻿using System.Diagnostics.Eventing.Reader;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics.Eventing.Reader;
+using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -19,7 +22,7 @@ using System.Xml.Linq;
 using static System.Formats.Asn1.AsnWriter;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Smoke_Less_2024
+namespace SLSM
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -27,13 +30,16 @@ namespace Smoke_Less_2024
     public partial class MainWindow : Window
     {
         protected int index, hoursToBeat, sizeOfList, index2;
-        protected string path, first, whole, last, seed;
+        string path = System.IO.Path.GetDirectoryName(
+                System.Reflection.Assembly.GetEntryAssembly().Location);
+        string dates;
         protected bool after;
         Tuple<string, string> output;
         Tuple<int, int> seeds;
         CultureInfo provider;
 
-        public MainWindow() => InitializeComponent();
+        int numOfPacks = 0;
+        //public MainWindow() => InitializeComponent();
 
         /*
             path = System.IO.Path.GetDirectoryName(
@@ -114,12 +120,59 @@ namespace Smoke_Less_2024
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             //today's date
-            
+
             //seeds = readSeed();
             //readDate(false);
+
+            // Handle opening logic
+            if (File.Exists(System.IO.Path.Combine(path, "dates.txt")))
+            {
+                using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "dates.txt"))) //read from file, capture last entry
+                {
+                    dates = sr.ReadToEnd();
+                    sr.Close();
+                }
+            } else
+            {   
+                using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "dates.txt")))
+                {
+                    sw.Write("", System.IO.Path.Combine(path, "dates.txt"));
+                }
+            }
+        }
+        private async void OnWindowClosing(object sender, CancelEventArgs e)
+        {
+            // Handle closing logic, set e.Cancel as needed
         }
 
-        
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void update(int i)
+        {
+            if (i == 1)
+            {
+                numOfPacks++;
+                lblPerChange.Content = numOfPacks;
+            }  else if (i == -1)
+            {
+                numOfPacks--;
+                lblPerChange.Content = numOfPacks;
+            }
+        }
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            update(1);
+        }
+
+        private void btnSubtract_Click(object sender, RoutedEventArgs e)
+        {
+            update(-1);
+        }
+
+
     }//end class
 
 }

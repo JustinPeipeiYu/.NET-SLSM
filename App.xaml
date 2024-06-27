@@ -1,7 +1,7 @@
-﻿<Application x:Class="Smoke_Less_2024.App"
+﻿<Application x:Class="SLSM.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Smoke_Less_2024"
+             xmlns:local="clr-namespace:SLSM"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          
