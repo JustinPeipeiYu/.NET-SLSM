@@ -29,16 +29,22 @@ namespace SLSM
     /// </summary>
     public partial class MainWindow : Window
     {
-        protected int index, hoursToBeat, sizeOfList, index2;
+        //protected int index, hoursToBeat, sizeOfList, index2;
         string path = System.IO.Path.GetDirectoryName(
                 System.Reflection.Assembly.GetEntryAssembly().Location);
         string dates;
-        protected bool after;
-        Tuple<string, string> output;
-        Tuple<int, int> seeds;
-        CultureInfo provider;
+        //protected bool after;
+        //Tuple<string, string> output;
+        //Tuple<int, int> seeds;
+        //CultureInfo provider;
 
         int numOfPacks = 0;
+
+        private void btnSubmit_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         //public MainWindow() => InitializeComponent();
 
         /*
@@ -145,31 +151,16 @@ namespace SLSM
             // Handle closing logic, set e.Cancel as needed
         }
 
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
 
         private void update(int i)
         {
             if (i == 1)
             {
                 numOfPacks++;
-                lblPerChange.Content = numOfPacks;
             }  else if (i == -1)
             {
                 numOfPacks--;
-                lblPerChange.Content = numOfPacks;
             }
-        }
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
-        {
-            update(1);
-        }
-
-        private void btnSubtract_Click(object sender, RoutedEventArgs e)
-        {
-            update(-1);
         }
 
 
