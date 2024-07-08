@@ -8,13 +8,13 @@
         Background="gray">
     <Grid Loaded="MainWindow_Loaded">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="0.5*"/>
             <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="4*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="0.5*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="0.3*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="5*"/>
             <RowDefinition Height="0.5*"/>
@@ -27,11 +27,11 @@
             <RowDefinition Height="0.5*"/>
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Column="1" Grid.Row="1"  x:Name="frequency">
-            <RadioButton x:Name="rbFrequency" GroupName="titleOptions" Content="Frequency" Background="white" Foreground="black" HorizontalAlignment="Right"/>
+        <StackPanel Grid.RowSpan="2" Grid.Column="1" Grid.Row="0" x:Name="money">
+            <Label x:Name="lblMoney" Content="Money Saved (CAD$)" Foreground="black" HorizontalAlignment="Right"/>
         </StackPanel>
-        <StackPanel Grid.Column="2" Grid.Row="1" x:Name="money">
-            <RadioButton x:Name="rbMoney" GroupName="titleOptions" Content="Money ($)" Background="white" Foreground="black" HorizontalAlignment="Left"/>
+        <StackPanel Grid.Column="2" Grid.Row="1" x:Name="amount">
+            <TextBox x:Name="txtAmount" Width="100" HorizontalAlignment="Left" IsReadOnly="True"></TextBox>
         </StackPanel>
         <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" x:Name="graph">
             <Canvas Background="black" Height="133"></Canvas>
@@ -39,27 +39,34 @@
         <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4" x:Name="move">
             <Slider x:Name="sldMove" HorizontalAlignment="Center" Width="100" SmallChange="1"/>
         </StackPanel>
-        <StackPanel Grid.RowSpan="2" Grid.Column="1" Grid.Row="5" x:Name="brand1">
+        <StackPanel Grid.RowSpan="2"  Grid.Column="1" Grid.Row="5" x:Name="brand1">
             <Label x:Name="lblBrand" Content="Select Brand:" Foreground="black" HorizontalAlignment="Right"/>
         </StackPanel>
-        <StackPanel Grid.RowSpan="2" Grid.Column="2" Grid.Row="6" x:Name="brand2">
-            <ListBox x:Name="lstBxBrand" HorizontalAlignment="Left" Height="65" Foreground="white" Background="black">
-                <ListBoxItem x:Name="belmont" Content="Belmont"/>
-                <ListBoxItem x:Name="canadianClassic" Content="Canadian Classic"/>
-                <ListBoxItem x:Name="duMaurier" Content="Du Maurier"/>
-                <ListBoxItem x:Name="exportA" Content="Export A"/>
-                <ListBoxItem x:Name="marlboro" Content="Marlboro" />
-                <ListBoxItem x:Name="pallMall" Content="Pall Mall"/>
+        <StackPanel Grid.RowSpan="2"  Grid.Column="2" Grid.Row="6" x:Name="brand2">
+            <ListBox x:Name="lstBxBrand" HorizontalAlignment="left" Height="65" Foreground="white" Background="black">
+                <ListBoxItem x:Name="BensonAndHedges" Content="Benson and Hedges"/>
+                <ListBoxItem x:Name="CanadianClassics" Content="Canadian Classics"/>
+                <ListBoxItem x:Name="DuMaurier" Content="Du Maurier"/>
+                <ListBoxItem x:Name="ExportA" Content="Export A"/>
+                <ListBoxItem x:Name="JohnPlayerSpecial" Content="John Player Special"/>
+                <ListBoxItem x:Name="LD" Content="LD" />
+                <ListBoxItem x:Name="MacdonaldSelect" Content="Macdonald Select"/>
+                <ListBoxItem x:Name="Matinee" Content="Matinée"/>
+                <ListBoxItem x:Name="NEXT" Content="NEXT"/>
+                <ListBoxItem x:Name="Number7" Content="Number 7"/>
+                <ListBoxItem x:Name="PallMall" Content="Pall Mall"/>
+                <ListBoxItem x:Name="PhilipMorris" Content="Philip Morris"/>
             </ListBox>
         </StackPanel>
+        
         <StackPanel Grid.RowSpan="2" Grid.Column="1" Grid.Row="8" x:Name="size">
-            <Label x:Name="lblSize" Content="Select Size:" Foreground="black" HorizontalAlignment="Right"/>
+            <Label x:Name="lblSize" Content="Select Pack Size:" Foreground="black" HorizontalAlignment="Right"/>
         </StackPanel>
-        <StackPanel Grid.Column="2" Grid.Row="9" x:Name="king">
-            <RadioButton x:Name="rbKing" Foreground="black" GroupName="grpSize" Content="King Size (25)" HorizontalAlignment="Left" />
+        <StackPanel Grid.Column="2" Grid.Row="9" x:Name="large">
+            <RadioButton x:Name="rbKing" Foreground="black" GroupName="grpSize" Content="large" HorizontalAlignment="Left" />
         </StackPanel>
-        <StackPanel Grid.Column="2" Grid.Row="9" x:Name="regular">
-            <RadioButton x:Name="rbRegular" Foreground="black" GroupName="grpSize" Content="Regular (20)" HorizontalAlignment="Right"/>
+        <StackPanel Grid.Column="2" Grid.Row="9" x:Name="standard">
+            <RadioButton x:Name="rbRegular" Foreground="black" GroupName="grpSize" Content="standard" HorizontalAlignment="center"/>
         </StackPanel>
         <StackPanel Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="11" x:Name="submit">
             <Button x:Name="btnSubmit" Background="White" Content="Submit" HorizontalAlignment="Center" Width="70" Click="btnSubmit_Click"/>

@@ -33,6 +33,8 @@ namespace SLSM
         string path = System.IO.Path.GetDirectoryName(
                 System.Reflection.Assembly.GetEntryAssembly().Location);
         string dates;
+        Dictionary<string, float> largePrices = new Dictionary<string, float>();
+        Dictionary<string,float> standardPrices =   new Dictionary<string,float>();
         //protected bool after;
         //Tuple<string, string> output;
         //Tuple<int, int> seeds;
@@ -123,7 +125,7 @@ namespace SLSM
          * 
             days = Convert.ToInt32(hours / 24); //convert from one unit to another
          */
-        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             //today's date
 
@@ -131,22 +133,23 @@ namespace SLSM
             //readDate(false);
 
             // Handle opening logic
-            if (File.Exists(System.IO.Path.Combine(path, "dates.txt")))
+            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "smokingDates.txt"))) //read from file, capture last entry
             {
-                using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "dates.txt"))) //read from file, capture last entry
-                {
-                    dates = sr.ReadToEnd();
-                    sr.Close();
-                }
-            } else
-            {   
-                using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "dates.txt")))
-                {
-                    sw.Write("", System.IO.Path.Combine(path, "dates.txt"));
-                }
+                dates = sr.ReadToEnd();
+                sr.Close();
+            }
+            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "standardPrices.txt"))) //read from file, capture last entry
+            {
+                 dates = sr.ReadToEnd();
+                 sr.Close();
+            }
+            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "largePrices.txt"))) //read from file, capture last entry
+            {
+                dates = sr.ReadToEnd();
+                sr.Close();
             }
         }
-        private async void OnWindowClosing(object sender, CancelEventArgs e)
+        private void OnWindowClosing(object sender, CancelEventArgs e)
         {
             // Handle closing logic, set e.Cancel as needed
         }
