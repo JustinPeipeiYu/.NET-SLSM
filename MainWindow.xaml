@@ -14,7 +14,7 @@
             <ColumnDefinition Width="0.5*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.3*"/>
+            <RowDefinition Height="0.2*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="5*"/>
             <RowDefinition Height="0.5*"/>
@@ -28,7 +28,7 @@
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.RowSpan="2" Grid.Column="1" Grid.Row="0" x:Name="money">
-            <Label x:Name="lblMoney" Content="Money Saved (CAD$)" Foreground="black" HorizontalAlignment="Right"/>
+            <Label x:Name="lblMoney" Content="Change (CAD$)" Foreground="black" HorizontalAlignment="Right"/>
         </StackPanel>
         <StackPanel Grid.Column="2" Grid.Row="1" x:Name="amount">
             <TextBox x:Name="txtAmount" Width="100" HorizontalAlignment="Left" IsReadOnly="True"></TextBox>
@@ -37,7 +37,7 @@
             <Canvas Background="black" Height="133"></Canvas>
         </StackPanel>
         <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4" x:Name="move">
-            <Slider x:Name="sldMove" HorizontalAlignment="Center" Width="100" SmallChange="1"/>
+            <Slider x:Name="sldMove" HorizontalAlignment="Center" Width="100" SmallChange="0.85"/>
         </StackPanel>
         <StackPanel Grid.RowSpan="2"  Grid.Column="1" Grid.Row="5" x:Name="brand1">
             <Label x:Name="lblBrand" Content="Select Brand:" Foreground="black" HorizontalAlignment="Right"/>

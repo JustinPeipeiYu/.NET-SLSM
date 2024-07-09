@@ -32,9 +32,11 @@ namespace SLSM
         //protected int index, hoursToBeat, sizeOfList, index2;
         string path = System.IO.Path.GetDirectoryName(
                 System.Reflection.Assembly.GetEntryAssembly().Location);
-        string dates;
-        Dictionary<string, float> largePrices = new Dictionary<string, float>();
-        Dictionary<string,float> standardPrices =   new Dictionary<string,float>();
+        List<DateTime> dates = new List<DateTime>();
+        List<string> brands = new List<string>();
+        List<float> standardPrices = new List<float>();
+        List<float> largePrices = new List<float>();
+        List<float> spendingAmount = new List<float>();
         //protected bool after;
         //Tuple<string, string> output;
         //Tuple<int, int> seeds;
@@ -133,19 +135,52 @@ namespace SLSM
             //readDate(false);
 
             // Handle opening logic
-            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "smokingDates.txt"))) //read from file, capture last entry
+            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "brandNames.txt"))) //read from file, capture last entry
             {
-                dates = sr.ReadToEnd();
+                string line;
+                while ((line = sr.ReadLine()) != "" && line != null)
+                {
+                    brands.Add(line);
+                }
+                sr.Close();
+            }
+            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "spendingAmounts.txt")))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != "" && line != null)
+                {
+                    var price = float.Parse(line);
+                    spendingAmount.Add(price);
+                }
                 sr.Close();
             }
             using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "standardPrices.txt"))) //read from file, capture last entry
             {
-                 dates = sr.ReadToEnd();
-                 sr.Close();
+                string line;
+                while ((line = sr.ReadLine()) != "" && line != null)
+                {
+                    var price = float.Parse(line);
+                    standardPrices.Add(price);
+                }
+                sr.Close();
             }
             using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "largePrices.txt"))) //read from file, capture last entry
             {
-                dates = sr.ReadToEnd();
+                string line;
+                while ((line = sr.ReadLine()) != "" && line != null)
+                {
+                    var price = float.Parse(line);
+                    largePrices.Add(price);
+                }
+                sr.Close();
+            }
+            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "firstDate.txt"))) //read from file, capture last entry
+            {
+                string line;
+                while ((line = sr.ReadLine()) != "" && line != null)
+                {
+                    dates.Add(DateTime.Parse(line));
+                }
                 sr.Close();
             }
         }
