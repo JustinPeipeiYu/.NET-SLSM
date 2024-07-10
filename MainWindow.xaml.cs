@@ -37,12 +37,12 @@ namespace SLSM
         List<float> standardPrices = new List<float>();
         List<float> largePrices = new List<float>();
         List<float> spendingAmount = new List<float>();
+        Dictionary<string, Tuple<float, float>> inventory = new Dictionary<string, Tuple<float, float>>();
         //protected bool after;
         //Tuple<string, string> output;
         //Tuple<int, int> seeds;
         //CultureInfo provider;
-
-        int numOfPacks = 0;
+        //int numOfPacks = 0;
 
         private void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
@@ -154,7 +154,7 @@ namespace SLSM
                 }
                 sr.Close();
             }
-            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "standardPrices.txt"))) //read from file, capture last entry
+            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "standardPrices.txt"))) 
             {
                 string line;
                 while ((line = sr.ReadLine()) != "" && line != null)
@@ -164,7 +164,7 @@ namespace SLSM
                 }
                 sr.Close();
             }
-            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "largePrices.txt"))) //read from file, capture last entry
+            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "largePrices.txt"))) 
             {
                 string line;
                 while ((line = sr.ReadLine()) != "" && line != null)
@@ -174,7 +174,7 @@ namespace SLSM
                 }
                 sr.Close();
             }
-            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "firstDate.txt"))) //read from file, capture last entry
+            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "firstDate.txt"))) 
             {
                 string line;
                 while ((line = sr.ReadLine()) != "" && line != null)
@@ -183,24 +183,22 @@ namespace SLSM
                 }
                 sr.Close();
             }
+            populateInventory(inventory,brands,standardPrices,largePrices);
         }
         private void OnWindowClosing(object sender, CancelEventArgs e)
         {
             // Handle closing logic, set e.Cancel as needed
         }
 
-
-        private void update(int i)
+        private Dictionary<string, Tuple<float, float>> populateInventory(Dictionary<string, Tuple<float, float>> inventory, List<string> brands,List<float> standardPrices,List<float> largePrices)
         {
-            if (i == 1)
-            {
-                numOfPacks++;
-            }  else if (i == -1)
-            {
-                numOfPacks--;
+            foreach (var brand in brands){
+                int i = brands.IndexOf(brand);
+                inventory[brand] = new Tuple<float, float>(standardPrices[i], largePrices[i]);
             }
+            return inventory;
+            
         }
-
     }//end class
 
 }
