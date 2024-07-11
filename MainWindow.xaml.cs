@@ -15,6 +15,7 @@ using System.Windows.Documents;
 using System.Windows.Documents.DocumentStructures;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -32,22 +33,23 @@ namespace SLSM
         //protected int index, hoursToBeat, sizeOfList, index2;
         string path = System.IO.Path.GetDirectoryName(
                 System.Reflection.Assembly.GetEntryAssembly().Location);
+        /// <summary>
+        /*Lists of data*/
+        /// </summary>
         List<DateTime> dates = new List<DateTime>();
         List<string> brands = new List<string>();
         List<float> standardPrices = new List<float>();
         List<float> largePrices = new List<float>();
         List<float> spendingAmount = new List<float>();
         Dictionary<string, Tuple<float, float>> inventory = new Dictionary<string, Tuple<float, float>>();
+        //index to get price from inventory (index = 0 is small, index = 1 is large)
+        int index = -1;
         //protected bool after;
         //Tuple<string, string> output;
         //Tuple<int, int> seeds;
         //CultureInfo provider;
         //int numOfPacks = 0;
 
-        private void btnSubmit_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         //public MainWindow() => InitializeComponent();
 
@@ -198,6 +200,44 @@ namespace SLSM
             }
             return inventory;
             
+        }
+
+        private void btnSubmit_Click(object sender, RoutedEventArgs e)
+        {
+            /*If there entry, do not write to file*/
+            if (dates.Count > 0)
+            {
+                return;
+            }
+            /*If no radio button selected, do not write to file*/
+            if (index == -1)
+            {
+                return;
+            }
+            /*If no brand selected, do not write to file*/
+            if (lbBrand.SelectedItem == null) 
+            {
+                return;
+            }
+            using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "firstDate.txt")))
+            {
+                sw.WriteLine(DateTime.Now.ToString("d/M/yyyy"));
+            }
+        }
+
+        private void btnSubmit_Selected(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void rbRegular_Checked(object sender, RoutedEventArgs e)
+        {
+            index = 0;
+        }
+
+        private void rbKing_Checked(object sender, RoutedEventArgs e)
+        {
+            index = 1;
         }
     }//end class
 
