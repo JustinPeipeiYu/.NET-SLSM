@@ -136,7 +136,7 @@ namespace SLSM
             //seeds = readSeed();
             //readDate(false);
 
-            // Handle opening logic
+            // Handle opening logic, NOTE: reading from text file requires a literal path instead of a variable path
             using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "brandNames.txt"))) //read from file, capture last entry
             {
                 string line;
@@ -219,15 +219,22 @@ namespace SLSM
             {
                 return;
             }
+            /*NOTE: writing to text file requires literal path instead of variable path*/
             using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "firstDate.txt")))
             {
                 sw.WriteLine(DateTime.Now.ToString("d/M/yyyy"));
             }
         }
 
-        private void btnSubmit_Selected(object sender, RoutedEventArgs e)
+        private void btnSubmit_Selected(object sender, RoutedEventArgs e, KeyEventArgs s)
         {
-
+            if (s.Key == Key.Space)
+            {
+                using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "firstDate.txt")))
+                {
+                    sw.WriteLine(DateTime.Now.ToString("d/M/yyyy"));
+                }
+            }
         }
 
         private void rbRegular_Checked(object sender, RoutedEventArgs e)
