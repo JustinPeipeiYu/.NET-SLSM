@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.Diagnostics.Metrics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -199,8 +200,19 @@ namespace SLSM
                 inventory[brand] = new Tuple<float, float>(standardPrices[i], largePrices[i]);
             }
             return inventory;
-            
         }
+
+        private MessageBoxResult confirmSubmission()
+        {
+            string messageBoxText = "Do you want to save changes?";
+            string caption = "SLSM";
+            MessageBoxButton button = MessageBoxButton.YesNo;
+            MessageBoxImage icon = MessageBoxImage.Warning;
+            MessageBoxResult result;
+            result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+            return result;
+        }
+
 
         private void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
@@ -219,20 +231,39 @@ namespace SLSM
             {
                 return;
             }
-            /*NOTE: writing to text file requires literal path instead of variable path*/
-            using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "firstDate.txt")))
+            switch (confirmSubmission())
             {
-                sw.WriteLine(DateTime.Now.ToString("d/M/yyyy"));
-            }
+                case MessageBoxResult.Yes:
+                    /*NOTE: writing to text file requires literal path instead of variable path*/
+                    using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "firstDate.txt")))
+                    {
+                        sw.WriteLine(DateTime.Now.ToString("d/M/yyyy"));
+                        sw.Close();
+                    }
+                    MessageBox.Show("Changes were saved.");
+                    break;
+                case MessageBoxResult.No:
+                    break;
+            }   
         }
 
         private void btnSubmit_Selected(object sender, RoutedEventArgs e, KeyEventArgs s)
         {
             if (s.Key == Key.Space)
             {
-                using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "firstDate.txt")))
+                switch (confirmSubmission())
                 {
-                    sw.WriteLine(DateTime.Now.ToString("d/M/yyyy"));
+                    case MessageBoxResult.Yes:
+                        /*NOTE: writing to text file requires literal path instead of variable path*/
+                        using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "firstDate.txt")))
+                        {
+                            sw.WriteLine(DateTime.Now.ToString("d/M/yyyy"));
+                            sw.Close();
+                        }
+                        MessageBox.Show("Changes were saved.");
+                        break;
+                    case MessageBoxResult.No:
+                        break;
                 }
             }
         }
