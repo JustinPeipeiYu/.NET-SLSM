@@ -42,20 +42,20 @@
         <StackPanel Grid.RowSpan="2"  Grid.Column="1" Grid.Row="5" x:Name="brand1">
             <Label x:Name="lblBrand" Content="Brand:" Foreground="black" HorizontalAlignment="Right"/>
         </StackPanel>
-        <StackPanel Grid.RowSpan="2"  Grid.Column="2" Grid.Row="6" x:Name="brand2">
+        <StackPanel Grid.RowSpan="2"  Grid.Column="2" Grid.Row="6" x:Name="brand2" Height="77" VerticalAlignment="Top">
             <ListBox x:Name="lbBrand" HorizontalAlignment="left" Height="65" Foreground="black" Background="#f99e35">
-                <ListBoxItem x:Name="BensonAndHedges" Content="Benson and Hedges"/>
-                <ListBoxItem x:Name="CanadianClassics" Content="Canadian Classics"/>
-                <ListBoxItem x:Name="DuMaurier" Content="Du Maurier"/>
-                <ListBoxItem x:Name="ExportA" Content="Export A"/>
-                <ListBoxItem x:Name="JohnPlayerSpecial" Content="John Player Special"/>
-                <ListBoxItem x:Name="LD" Content="LD" />
-                <ListBoxItem x:Name="MacdonaldSelect" Content="Macdonald Select"/>
-                <ListBoxItem x:Name="Matinee" Content="Matinée"/>
-                <ListBoxItem x:Name="NEXT" Content="NEXT"/>
-                <ListBoxItem x:Name="Number7" Content="Number 7"/>
-                <ListBoxItem x:Name="PallMall" Content="Pall Mall"/>
-                <ListBoxItem x:Name="PhilipMorris" Content="Philip Morris"/>
+                <ListBoxItem x:Name="BensonAndHedges" Content="Benson and Hedges" Selected="BensonAndHedges_Selected"/>
+                <ListBoxItem x:Name="CanadianClassics" Content="Canadian Classics" Selected="CanadianClassics_Selected"/>
+                <ListBoxItem x:Name="DuMaurier" Content="Du Maurier" Selected="DuMaurier_Selected"/>
+                <ListBoxItem x:Name="ExportA" Content="Export A" Selected="ExportA_Selected"/>
+                <ListBoxItem x:Name="JohnPlayerSpecial" Content="John Player Special" Selected="JohnPlayerSpecial_Selected"/>
+                <ListBoxItem x:Name="LD" Content="LD" Selected="LD_Selected"/>
+                <ListBoxItem x:Name="MacdonaldSelect" Content="Macdonald Select" Selected="MacdonaldSelect_Selected"/>
+                <ListBoxItem x:Name="Matinee" Content="Matinée" Selected="Matinee_Selected"/>
+                <ListBoxItem x:Name="NEXT" Content="NEXT" Selected="NEXT_Selected"/>
+                <ListBoxItem x:Name="Number7" Content="Number 7" Selected="Number7_Selected"/>
+                <ListBoxItem x:Name="PallMall" Content="Pall Mall" Selected="PallMall_Selected"/>
+                <ListBoxItem x:Name="PhilipMorris" Content="Philip Morris" Selected="PhilipMorris_Selected"/>
             </ListBox>
         </StackPanel>
         <StackPanel Grid.RowSpan="4" Grid.Row="3" Grid.Column="1">
