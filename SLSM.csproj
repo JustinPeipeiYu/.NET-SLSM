@@ -9,12 +9,7 @@
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x64</Platforms>
     <StartupObject></StartupObject>
-    <ApplicationIcon>logo.ico</ApplicationIcon>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="logo.ico" />
-  </ItemGroup>
 
   <ItemGroup>
     <Folder Include="bin\Debug\net8.0-windows\" />

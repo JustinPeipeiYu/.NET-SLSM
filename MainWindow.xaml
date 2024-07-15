@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="SLSM" ResizeMode="NoResize" Height="400" Width="450"
-        Background="#c6555b">
+        Background="#3b3b3b">
     <Grid Loaded="MainWindow_Loaded">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.5*"/>
@@ -19,7 +19,7 @@
             <RowDefinition Height="5*"/>
             <RowDefinition Height="0.5*"/>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="0.3*"/>
+            <RowDefinition Height="0.1*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="2*"/>
             <RowDefinition Height="0.3*"/>
@@ -28,53 +28,59 @@
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.RowSpan="2" Grid.Column="1" Grid.Row="0" x:Name="money">
-            <Label x:Name="lblMoney" Content="Change (CAD$)" Foreground="black" HorizontalAlignment="Right"/>
+            <Label x:Name="lblMoney" Content="Monthly Spending (CAD$):" Foreground="white" HorizontalAlignment="Right"/>
         </StackPanel>
         <StackPanel Grid.Column="2" Grid.Row="1" x:Name="amount">
-            <TextBox x:Name="txtAmount" Width="100" HorizontalAlignment="Left" IsReadOnly="True"></TextBox>
+            <TextBox x:Name="txtAmount" Width="80" HorizontalAlignment="Left" IsReadOnly="True"></TextBox>
+        </StackPanel>
+        <StackPanel Grid.Column="2" Grid.Row="1" x:Name="downArrow">
+            <Image  Source="C:/Users/Public/Documents/WPF/SLSM/down_arrow.png" HorizontalAlignment="Center" Width="20" Height="20"/>
+        </StackPanel>
+        <StackPanel Grid.Column="2" Grid.Row="1" x:Name="upArrow" Visibility="Hidden">
+            <Image Source="C:/Users/Public/Documents/WPF/SLSM/up_arrow.png" HorizontalAlignment="Center" Width="20" Height="20"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" x:Name="graph">
-            <Canvas Background="#d8d8d8" Height="140"></Canvas>
+            <Canvas Background="white" Height="140"></Canvas>
         </StackPanel>
         <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4" x:Name="move">
             <Slider x:Name="sldMove" HorizontalAlignment="Center" Width="100" SmallChange="0.85"/>
         </StackPanel>
         <StackPanel Grid.RowSpan="2"  Grid.Column="1" Grid.Row="5" x:Name="brand1">
-            <Label x:Name="lblBrand" Content="Brand:" Foreground="black" HorizontalAlignment="Right"/>
+            <Label x:Name="lblBrand" Content="Brand:" Foreground="white" HorizontalAlignment="Right"/>
         </StackPanel>
         <StackPanel Grid.RowSpan="2"  Grid.Column="2" Grid.Row="6" x:Name="brand2" Height="77" VerticalAlignment="Top">
-            <ListBox x:Name="lbBrand" HorizontalAlignment="left" Height="65" Foreground="black" Background="#f99e35">
-                <ListBoxItem x:Name="BensonAndHedges" Content="Benson and Hedges" Selected="BensonAndHedges_Selected"/>
-                <ListBoxItem x:Name="CanadianClassics" Content="Canadian Classics" Selected="CanadianClassics_Selected"/>
-                <ListBoxItem x:Name="DuMaurier" Content="Du Maurier" Selected="DuMaurier_Selected"/>
-                <ListBoxItem x:Name="ExportA" Content="Export A" Selected="ExportA_Selected"/>
-                <ListBoxItem x:Name="JohnPlayerSpecial" Content="John Player Special" Selected="JohnPlayerSpecial_Selected"/>
-                <ListBoxItem x:Name="LD" Content="LD" Selected="LD_Selected"/>
-                <ListBoxItem x:Name="MacdonaldSelect" Content="Macdonald Select" Selected="MacdonaldSelect_Selected"/>
-                <ListBoxItem x:Name="Matinee" Content="Matinée" Selected="Matinee_Selected"/>
-                <ListBoxItem x:Name="NEXT" Content="NEXT" Selected="NEXT_Selected"/>
-                <ListBoxItem x:Name="Number7" Content="Number 7" Selected="Number7_Selected"/>
-                <ListBoxItem x:Name="PallMall" Content="Pall Mall" Selected="PallMall_Selected"/>
-                <ListBoxItem x:Name="PhilipMorris" Content="Philip Morris" Selected="PhilipMorris_Selected"/>
+            <ListBox x:Name="lbBrand" HorizontalAlignment="left" Height="65" Foreground="white" Background="#3b3b3b" >
+                <ListBoxItem x:Name="BensonAndHedges" Content="Benson and Hedges" Selected="BensonAndHedges_Selected" />
+                <ListBoxItem x:Name="CanadianClassics" Content="Canadian Classics" Selected="CanadianClassics_Selected" />
+                <ListBoxItem x:Name="DuMaurier" Content="Du Maurier" Selected="DuMaurier_Selected" />
+                <ListBoxItem x:Name="ExportA" Content="Export A" Selected="ExportA_Selected" />
+                <ListBoxItem x:Name="JohnPlayerSpecial" Content="John Player Special" Selected="JohnPlayerSpecial_Selected" />
+                <ListBoxItem x:Name="LD" Content="LD" Selected="LD_Selected" />
+                <ListBoxItem x:Name="MacdonaldSelect" Content="Macdonald Select" Selected="MacdonaldSelect_Selected" />
+                <ListBoxItem x:Name="Matinee" Content="Matinée" Selected="Matinee_Selected" />
+                <ListBoxItem x:Name="NEXT" Content="NEXT" Selected="NEXT_Selected" />
+                <ListBoxItem x:Name="Number7" Content="Number 7" Selected="Number7_Selected" />
+                <ListBoxItem x:Name="PallMall" Content="Pall Mall" Selected="PallMall_Selected" />
+                <ListBoxItem x:Name="PhilipMorris" Content="Philip Morris" Selected="PhilipMorris_Selected" />
             </ListBox>
         </StackPanel>
         <StackPanel Grid.RowSpan="4" Grid.Row="3" Grid.Column="1">
-            <Image Source="C:/Users/Public/Documents/WPF/SLSM/logo.jpeg" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Height="80"/>
+            <Image Source="C:/Users/Public/Documents/WPF/SLSM/logo.png" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Height="80"/>
         </StackPanel>
         <StackPanel Grid.RowSpan="4" Grid.Row="7" Grid.ColumnSpan="2"  Grid.Column="0">
             <Image Source="C:/Users/Public/Documents/WPF/SLSM/pot_of_gold.png" HorizontalAlignment="Center" Width="80" Height="80"/>
         </StackPanel>
         <StackPanel Grid.RowSpan="2" Grid.Column="1" Grid.Row="8" x:Name="size">
-            <Label x:Name="lblSize" Content="Pack Size:" Foreground="black" HorizontalAlignment="Right"/>
+            <Label x:Name="lblSize" Content="Pack Size:" Foreground="white" HorizontalAlignment="Right"/>
         </StackPanel>
         <StackPanel Grid.Column="2" Grid.Row="9" x:Name="large">
-            <RadioButton x:Name="rbKing" Foreground="black" GroupName="grpSize" Content="large" HorizontalAlignment="Left" Checked="rbKing_Checked"/>
+            <RadioButton x:Name="rbKing" Foreground="white" GroupName="grpSize" Content="large" HorizontalAlignment="Left" Checked="rbKing_Checked"/>
         </StackPanel>
         <StackPanel Grid.Column="2" Grid.Row="9" x:Name="standard">
-            <RadioButton x:Name="rbRegular" Foreground="black" GroupName="grpSize" Content="standard" HorizontalAlignment="center" Checked="rbRegular_Checked"/>
+            <RadioButton x:Name="rbRegular" Foreground="white" GroupName="grpSize" Content="standard" HorizontalAlignment="center" Checked="rbRegular_Checked"/>
         </StackPanel>
         <StackPanel Grid.ColumnSpan="2" Grid.Column="1" Grid.Row="11" x:Name="submit">
-            <Button x:Name="btnSubmit" Background="White" Content="Submit" HorizontalAlignment="Center" Width="150" Click="btnSubmit_Click"/>
+            <Button x:Name="btnSubmit" Background="white" Content="Submit" HorizontalAlignment="Center" Width="150" KeyDown="btnSubmit_KeyDown" Click="btnSubmit_Click"/>
         </StackPanel>
     </Grid>
 </Window>

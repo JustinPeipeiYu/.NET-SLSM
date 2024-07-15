@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.Diagnostics.Metrics;
 using System.DirectoryServices;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -21,6 +20,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml;
 using System.Xml.Linq;
 using static System.Formats.Asn1.AsnWriter;
 using static System.Net.Mime.MediaTypeNames;
@@ -168,7 +168,7 @@ namespace SLSM
             }
             return;
         }
-
+        
         /*DYNAMIC METHODS*/
         private void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
@@ -196,37 +196,6 @@ namespace SLSM
                 case MessageBoxResult.No:
                     break;
             }   
-        }
-
-        private void btnSubmit_Selected(object sender, RoutedEventArgs e, KeyEventArgs s)
-        {
-            //submission procedure when spacebar is pressed
-            if (s.Key == Key.Space)
-            {
-                /*If no radio button selected, do not write to file*/
-                if (sizeIndex == -1)
-                {
-                    return;
-                }
-                /*If no brand selected, do not write to file*/
-                if (lbBrand.SelectedItem == null)
-                {
-                    return;
-                }
-                switch (confirmSubmission())
-                {
-                    case MessageBoxResult.Yes:
-                        //save changes
-                        writeDate();
-                        writePrice(brandSelected, sizeIndex);
-                        MessageBox.Show("Changes were saved.");
-                        //update program variables
-                        readDates();
-                        break;
-                    case MessageBoxResult.No:
-                        break;
-                }
-            }
         }
 
         private void rbRegular_Checked(object sender, RoutedEventArgs e)
@@ -258,12 +227,10 @@ namespace SLSM
         {
             brandSelected = "Export A";
         }
-
         private void JohnPlayerSpecial_Selected(object sender, RoutedEventArgs e)
         {
             brandSelected = "John Player Special";
         }
-
         private void LD_Selected(object sender, RoutedEventArgs e)
         {
             brandSelected = "LD";
@@ -273,12 +240,10 @@ namespace SLSM
         {
             brandSelected = "Macdonald Select";
         }
-
         private void Matinee_Selected(object sender, RoutedEventArgs e)
         {
             brandSelected = "Matinee";
         }
-
         private void NEXT_Selected(object sender, RoutedEventArgs e)
         {
             brandSelected = "NEXT";
@@ -293,11 +258,42 @@ namespace SLSM
         {
             brandSelected = "Pall Mall";
         }
-
         private void PhilipMorris_Selected(object sender, RoutedEventArgs e)
         {
             brandSelected = "Philip Morris";
         }
+
+        private void btnSubmit_KeyDown(object sender, KeyEventArgs e)
+        {
+            //submission procedure when spacebar is pressed
+            if (e.Key == Key.Space)
+            {
+                /*If no radio button selected, do not write to file*/
+                if (sizeIndex == -1)
+                {
+                    return;
+                }
+                /*If no brand selected, do not write to file*/
+                if (lbBrand.SelectedItem == null)
+                {
+                    return;
+                }
+                switch (confirmSubmission())
+                {
+                    case MessageBoxResult.Yes:
+                        //save changes
+                        writeDate();
+                        writePrice(brandSelected, sizeIndex);
+                        MessageBox.Show("Changes were saved.");
+                        //update program variables
+                        readDates();
+                        break;
+                    case MessageBoxResult.No:
+                        break;
+                }
+            }
+        }
+
     }//end class
 
 }
