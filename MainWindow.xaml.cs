@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics.Eventing.Reader;
 using System.Diagnostics.Metrics;
 using System.DirectoryServices;
@@ -36,16 +37,20 @@ namespace SLSM
         //path to text files
         string path = System.IO.Path.GetDirectoryName(
                 System.Reflection.Assembly.GetEntryAssembly().Location);
-        
-        /*LISTS TO STORE DATASETS AND USER DATA*/
-        List<int> days = new List<int>();
-        List<DateTime> dates = new List<DateTime>();
-        List<string> brands = new List<string>();
-        List<float> standardPrices = new List<float>();
-        List<float> largePrices = new List<float>();
-        List<float> spendingAmount = new List<float>();
+        static int numBrands = 11;
+        static int numDays = 365;
+        int numEntries;
+        float totalSpending;
+        /*ARRAYS TO STORE DATASETS AND USER DATA*/
+        int[] days = new int[numDays];
+        DateTime[] dates = new DateTime[numDays];
+        string[] brands = new string[numBrands];
+        float[] standardPrices = new float[numBrands];
+        float[] largePrices = new float[numBrands];
+        float[] spendingAmount = new float[numDays];
+        float[] cumSpendingAmount = new float[numDays];
         Dictionary<string, Tuple<float, float>> inventory = new Dictionary<string, Tuple<float, float>>();
-
+       
         //sizeIndex stores price from inventory (sizeIndex = 0 is small, sizeIndex = 1 is large)
         int sizeIndex = -1;
         string brandSelected = "";
@@ -59,6 +64,7 @@ namespace SLSM
             // Handle opening logic
             readDates();
             readPriceByBrand();
+            initGraph();
         }
         private void OnWindowClosing(object sender, CancelEventArgs e)
         {
@@ -66,31 +72,88 @@ namespace SLSM
         }
 
         /*CUSTOM FUNCTIONS*/
+        private void initGraph()
+        {
+            /*VARIABLES FOR GRAPH*/
+            const double margin = 10;
+            double xmin = margin;
+            double xmax = canGraph.Width - margin;
+            double ymin = margin;
+            double ymax = canGraph.Height - margin;
+            const double vstep = 120/12;
+            const double hstep = 365/12;
+            // Make the X axis.
+            GeometryGroup xaxis_geom = new GeometryGroup();
+            xaxis_geom.Children.Add(new LineGeometry(
+                new Point(xmin, ymax), new Point(xmax, ymax)));
+            for (double x = xmin;x <= xmax; x += hstep)
+            {
+                xaxis_geom.Children.Add(new LineGeometry(
+                    new Point(x, ymax - margin / 2),
+                    new Point(x, ymax + margin / 2)));
+            }
+            System.Windows.Shapes.Path xaxis_path = new System.Windows.Shapes.Path();
+            xaxis_path.StrokeThickness = 1;
+            xaxis_path.Stroke = Brushes.Black;
+            xaxis_path.Data = xaxis_geom;
+            canGraph.Children.Add(xaxis_path);
+            // Make the Y ayis.
+            GeometryGroup yaxis_geom = new GeometryGroup();
+            yaxis_geom.Children.Add(new LineGeometry(
+                new Point(xmin, ymin), new Point(xmin, ymax)));
+            for (double y = ymin; y <= ymax; y += vstep)
+            {
+                yaxis_geom.Children.Add(new LineGeometry(
+                    new Point(xmin - margin / 2, y),
+                    new Point(xmin + margin / 2, y)));
+            }
+            System.Windows.Shapes.Path yaxis_path = new System.Windows.Shapes.Path();
+            yaxis_path.StrokeThickness = 1;
+            yaxis_path.Stroke = Brushes.Black;
+            yaxis_path.Data = yaxis_geom;
+            canGraph.Children.Add(yaxis_path);
+            //Draw the data set
+            PointCollection points = new PointCollection();
+            totalSpending = 0;
+            for (int i = 0; i < numEntries; i++)
+            {
+                totalSpending += spendingAmount[i];
+                points.Add(new Point(days[i] + xmin, ymax - vstep/100 * totalSpending));
+                cumSpendingAmount[i] = totalSpending;
+            }
+            txtAmount.Text = totalSpending.ToString("C", new CultureInfo("en-US"));
+            Brush brush1 = Brushes.Red;
+            Polyline polyline = new Polyline();
+            polyline.StrokeThickness = 2;
+            polyline.Stroke = brush1;
+            polyline.Points = points;
+            canGraph.Children.Add(polyline);
+        }
         private void readPriceByBrand()
         {
             using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "priceByBrand.txt"))) //read from file, capture last entry
             {
                 string line;
-                while ((line = sr.ReadLine()) != "" && line != null)
+                for (int i = 0; i < numBrands; i++)
                 {
+                    line = sr.ReadLine();
                     string[] entries = line.Split(",");
-                    brands.Add(entries[0].Trim());
-                    standardPrices.Add(float.Parse(entries[1].Trim()));
-                    largePrices.Add(float.Parse(entries[2].Trim()));
+                    brands[i]=entries[0].Trim();
+                    standardPrices[i]=float.Parse(entries[1].Trim());
+                    largePrices[i]=float.Parse(entries[2].Trim());
                 }
                 sr.Close();
             }
             populateInventory();
             return;
         }
-        private void convertDatesToDays(List<DateTime> dates)
+        private void convertDatesToDays(DateTime[] dates)
         {
-            days.Add(0);
-            for (int i = 1; i < dates.Count; i++)
+            days[0]=0;
+            for (int i = 1; i < numEntries; i++)
             {
-                days.Add((dates[i].Date - dates[i - 1].Date).Days);
+                days[i]=(dates[i].Date - dates[0].Date).Days;
             } 
-            days.Add((DateTime.Now.Date - dates[dates.Count-1].Date).Days);
         }
         private void readDates()
         {
@@ -98,29 +161,30 @@ namespace SLSM
             using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "dates.txt")))
             {
                 string line;
+                int i = 0;
                 while ((line = sr.ReadLine()) != "" && line != null)
                 {
                     string[] entries = line.Split(",");
-                    dates.Add(DateTime.ParseExact(entries[0].Trim(),"d",culture));
+                    dates[i]=DateTime.ParseExact(entries[0].Trim(),"d",culture);
                     entries = entries.Skip(1).ToArray();
                     float sum = 0;
                     foreach (string entry in entries)
                     {
                         sum += float.Parse(entry.Trim());
                     }
-                    spendingAmount.Add(sum);
+                    spendingAmount[i] = sum;
+                    i++;
                 }
+                numEntries = i;
                 sr.Close();
             }
-            spendingAmount.Add(spendingAmount[spendingAmount.Count - 1]);
             convertDatesToDays(dates);
             return;
         }
         private void populateInventory()
         {
-            foreach (var brand in brands){
-                int i = brands.IndexOf(brand);
-                inventory[brand] = new Tuple<float, float>(standardPrices[i], largePrices[i]);
+            for (int i = 0; i < numBrands; i++) {
+                inventory[brands[i]] = new Tuple<float, float>(standardPrices[i], largePrices[i]);
             }
         }
 
@@ -141,10 +205,10 @@ namespace SLSM
             using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "dates.txt"), true))
             {
                 //if the file is not blank, write date on new line
-                if (dates.Count > 0)
+                if (numEntries > 0)
                 {
                     //if the last date entry was today, do not write new date
-                    if (dates.Last().Equals(DateTime.Today.Date))
+                    if (dates[numEntries].Equals(DateTime.Today.Date))
                     {
                         sw.Close();
                         return;
