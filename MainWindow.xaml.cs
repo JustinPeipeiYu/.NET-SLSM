@@ -38,6 +38,7 @@ namespace SLSM
                 System.Reflection.Assembly.GetEntryAssembly().Location);
         
         /*LISTS TO STORE DATASETS AND USER DATA*/
+        List<int> days = new List<int>();
         List<DateTime> dates = new List<DateTime>();
         List<string> brands = new List<string>();
         List<float> standardPrices = new List<float>();
@@ -67,7 +68,6 @@ namespace SLSM
         /*CUSTOM FUNCTIONS*/
         private void readPriceByBrand()
         {
-            //NOTE: reading from text files requires a literal path instead of a variable path
             using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "priceByBrand.txt"))) //read from file, capture last entry
             {
                 string line;
@@ -83,9 +83,18 @@ namespace SLSM
             populateInventory();
             return;
         }
+        private void convertDatesToDays(List<DateTime> dates)
+        {
+            days.Add(0);
+            for (int i = 1; i < dates.Count; i++)
+            {
+                days.Add((dates[i].Date - dates[i - 1].Date).Days);
+            } 
+            days.Add((DateTime.Now.Date - dates[dates.Count-1].Date).Days);
+        }
         private void readDates()
         {
-            //NOTE: reading from text files requires a literal path instead of a variable path
+            //reads the text file with dates and spending amounts 
             using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "dates.txt")))
             {
                 string line;
@@ -94,13 +103,17 @@ namespace SLSM
                     string[] entries = line.Split(",");
                     dates.Add(DateTime.ParseExact(entries[0].Trim(),"d",culture));
                     entries = entries.Skip(1).ToArray();
+                    float sum = 0;
                     foreach (string entry in entries)
                     {
-                        spendingAmount.Add(float.Parse(entry.Trim()));
+                        sum += float.Parse(entry.Trim());
                     }
+                    spendingAmount.Add(sum);
                 }
                 sr.Close();
             }
+            spendingAmount.Add(spendingAmount[spendingAmount.Count - 1]);
+            convertDatesToDays(dates);
             return;
         }
         private void populateInventory()
@@ -258,9 +271,9 @@ namespace SLSM
         {
             brandSelected = "Pall Mall";
         }
-        private void PhilipMorris_Selected(object sender, RoutedEventArgs e)
+        private void Marlboro_Selected(object sender, RoutedEventArgs e)
         {
-            brandSelected = "Philip Morris";
+            brandSelected = "Marlboro";
         }
 
         private void btnSubmit_KeyDown(object sender, KeyEventArgs e)

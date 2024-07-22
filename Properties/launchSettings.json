@@ -2,7 +2,7 @@
   "profiles": {
     "SLSM": {
       "commandName": "Project",
-      "workingDirectory": "C:\\Users\\Public\\Documents\\WPF\\SLSM\\bin\\Debug"
+      "workingDirectory": "D:\\WPF\\SLSM\\bin\\Debug"
     }
   }
 }

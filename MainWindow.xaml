@@ -36,9 +36,6 @@
         <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" x:Name="graph">
             <Canvas Background="white" Height="140"></Canvas>
         </StackPanel>
-        <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4" x:Name="move">
-            <Slider x:Name="sldMove" HorizontalAlignment="Center" Width="100" SmallChange="0.85"/>
-        </StackPanel>
         <StackPanel Grid.RowSpan="2"  Grid.Column="1" Grid.Row="5" x:Name="brand1">
             <Label x:Name="lblBrand" Content="Brand:" Foreground="#3b3b3b" HorizontalAlignment="Right"/>
         </StackPanel>
@@ -96,11 +93,11 @@
                 <ListBoxItem x:Name="JohnPlayerSpecial" Content="John Player Special" Selected="JohnPlayerSpecial_Selected" />
                 <ListBoxItem x:Name="LD" Content="LD" Selected="LD_Selected" />
                 <ListBoxItem x:Name="MacdonaldSelect" Content="Macdonald Select" Selected="MacdonaldSelect_Selected" />
+                <ListBoxItem x:Name="Marlboro" Content="Marlboro" Selected="Marlboro_Selected" />
                 <ListBoxItem x:Name="Matinee" Content="Matinée" Selected="Matinee_Selected" />
                 <ListBoxItem x:Name="NEXT" Content="NEXT" Selected="NEXT_Selected" />
                 <ListBoxItem x:Name="Number7" Content="Number 7" Selected="Number7_Selected" />
                 <ListBoxItem x:Name="PallMall" Content="Pall Mall" Selected="PallMall_Selected" />
-                <ListBoxItem x:Name="PhilipMorris" Content="Philip Morris" Selected="PhilipMorris_Selected" />
             </ListBox>
         </StackPanel>
         <StackPanel Grid.RowSpan="4" Grid.Row="3" Grid.Column="1">
