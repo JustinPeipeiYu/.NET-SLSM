@@ -6,7 +6,7 @@ on:
       - "slsm/v*"
 
 env:
-  PROJECT_PATH: SLSM/SLSM.csproj
+  PROJECT_PATH: SLSM.csproj
 
 jobs:
   deploy:
