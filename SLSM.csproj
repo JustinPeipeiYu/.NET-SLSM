@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
@@ -12,9 +11,4 @@
     <StartupObject></StartupObject>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="bin\Debug\net8.0-windows\" />
-  </ItemGroup>
-
 </Project>
