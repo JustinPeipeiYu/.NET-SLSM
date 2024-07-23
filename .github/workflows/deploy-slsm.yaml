@@ -3,7 +3,8 @@ on:
 push: 
 tags: 
 - "slsm/v*" 
-env: project_path: D:/WPF/SLSM/SLSM.csproj
+env: 
+project_path: D:/WPF/SLSM/SLSM.csproj
 jobs: deploy: runs-on: windows-latest 
 steps: 
 - uses: actions/checkout@v2
