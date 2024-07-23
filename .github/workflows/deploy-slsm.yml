@@ -4,7 +4,7 @@ on:
  push: 
   tags: SLSM/v*
 env: 
-	PROJECT_PATH: SLSM/SLSM.csproj
+	ProjectPath: SLSM/SLSM.csproj
 jobs:
 	deploy:
 		runs-on: windows-latest
@@ -13,19 +13,19 @@ jobs:
 			-uses: actions/setup-dotnet@v1
 			 with:
 				dotnet-version: 8.1.x
-			-run: dotnet restore ${{env.PROJECT_PATH}}
-			-run: dotnet build ${{env.PROJECT_PATH}} -c Release --no-restore
-			-run: dotnet publish ${{env.PROJECT_PATH}} -c Release --self-contained -r win-x64 -p:PublishSingleFile=True --no-build
+			-run: dotnet restore ${{env.ProjectPath}}
+			-run: dotnet build ${{env.ProjectPath}} -c Release --no-restore
+			-run: dotnet publish ${{env.ProjectPath}} -c Release --self-contained -r win-x64 -p:PublishSingleFile=True --no-build
 			-uses: actions/create-release@v1
 			   id: create_release
 			  env: 
-				GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+				GithubToken: ${{secrets.GithubToken}}
 			 with:
 				tag_name: ${{github.ref}}
 				release_name: ${{github.ref}}
 			-uses: csexton/release-asset-action@v2
 			 with: 
-				github-token: ${{secrets.GITHUB_TOKEN}}
+				github-token: ${{secrets.GithubToken}}
 				pattern: D:/WPF/SLSM/bin/Release/net8.0-windows/win-x64/publish/*exe
 				release-url: ${{steps.create_release.outputs.upload_url}}
 				
