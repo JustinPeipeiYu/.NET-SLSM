@@ -4,7 +4,7 @@ on:
  push: 
   tags: SLSM/v*
 env: 
-	ProjectPath: https://github.com/JustinPeipeiYu/SLSM.git
+	ProjectPath: https://github.com/JustinPeipeiYu/SLSM.csproj
 jobs:
 	deploy:
 		runs-on: windows-latest
