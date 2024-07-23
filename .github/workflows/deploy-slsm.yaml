@@ -1,5 +1,5 @@
 name: "deploy-slsm"
-on: push: tags: - slsm/v* 
+on: push: tags: - "slsm/v*" 
 env: project_path: D:/WPF/SLSM/SLSM.csproj
 jobs: deploy: runs-on: windows-latest 
 steps: 
