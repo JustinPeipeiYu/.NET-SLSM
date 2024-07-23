@@ -25,7 +25,7 @@ jobs:
 			 with:
 				tag_name: ${{github.ref}}
 				release_name: ${{github.ref}}
-			-uses: csexton/release-asset-actions@v2
+			-uses: csexton/release-asset-action@v2
 			 with: 
 				github-token: ${{secrets.GITHUB_TOKEN}}
 				pattern: D:/WPF/SLSM/bin/Release/net8.0-windows/win-x64/publish/*exe
