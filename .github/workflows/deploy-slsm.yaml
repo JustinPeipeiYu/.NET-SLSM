@@ -2,7 +2,8 @@ name: deploy slsm
 
 on: 
  push: 
-  tags: SLSM/v*
+  tags: 
+  - SLSM/v*
 env: 
  project_path: D:/WPF/SLSM/SLSM.csproj
 jobs:
