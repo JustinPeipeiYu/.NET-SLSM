@@ -39,7 +39,7 @@ namespace SLSM
                 System.Reflection.Assembly.GetEntryAssembly().Location);
         static int numBrands = 11;
         static int numDays = 365;
-        int numEntries;
+        int numEntries=0;
         float totalSpending;
         /*ARRAYS TO STORE DATASETS AND USER DATA*/
         int[] days = new int[numDays];
@@ -50,19 +50,28 @@ namespace SLSM
         float[] spendingAmount = new float[numDays];
         float[] cumSpendingAmount = new float[numDays];
         Dictionary<string, Tuple<float, float>> inventory = new Dictionary<string, Tuple<float, float>>();
-       
+
+        /*VARIABLES FOR GRAPH*/
+        const double margin = 10;
+        double xmin = margin;
+        double xmax;
+        double ymin = margin;
+        double ymax;
+        double hstep;
+        double vstep;
+
         //sizeIndex stores price from inventory (sizeIndex = 0 is small, sizeIndex = 1 is large)
         int sizeIndex = -1;
         string brandSelected = "";
 
         //datetime culture
         CultureInfo culture = new CultureInfo("en-US");
-        
+
         /*MAIN PROGRAM*/
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            // Handle opening logic
             readDates();
+            // Handle opening logic
             readPriceByBrand();
             initGraph();
         }
@@ -72,26 +81,31 @@ namespace SLSM
         }
 
         /*CUSTOM FUNCTIONS*/
+
+        //find spending amount
+        private double findSpendingAmountPerDay(double sliderValue)
+        {
+            int nearestDay = (int)Math.Round(sliderValue);
+            return cumSpendingAmount[nearestDay]/(nearestDay+1);
+        }
         private void initGraph()
         {
-            /*VARIABLES FOR GRAPH*/
-            const double margin = 10;
-            double xmin = margin;
-            double xmax = canGraph.Width - margin;
-            double ymin = margin;
-            double ymax = canGraph.Height - margin;
-            const double vstep = 120/12;
-            const double hstep = 365/12;
+            //calculate dataset y values
+            totalSpending = 0;
+            for (int i = 0; i < numEntries; i++)
+            {
+                totalSpending += spendingAmount[i];
+                cumSpendingAmount[i] = totalSpending;
+            }
+            //define dimensions
+            ymax = canGraph.Height - margin;
+            xmax = canGraph.Width + margin;
+            hstep = (xmax - xmin) / (numEntries - 1);
+            vstep = (ymax - ymin )/ cumSpendingAmount[numEntries - 1];
             // Make the X axis.
             GeometryGroup xaxis_geom = new GeometryGroup();
             xaxis_geom.Children.Add(new LineGeometry(
                 new Point(xmin, ymax), new Point(xmax, ymax)));
-            for (double x = xmin;x <= xmax; x += hstep)
-            {
-                xaxis_geom.Children.Add(new LineGeometry(
-                    new Point(x, ymax - margin / 2),
-                    new Point(x, ymax + margin / 2)));
-            }
             System.Windows.Shapes.Path xaxis_path = new System.Windows.Shapes.Path();
             xaxis_path.StrokeThickness = 1;
             xaxis_path.Stroke = Brushes.Black;
@@ -101,12 +115,6 @@ namespace SLSM
             GeometryGroup yaxis_geom = new GeometryGroup();
             yaxis_geom.Children.Add(new LineGeometry(
                 new Point(xmin, ymin), new Point(xmin, ymax)));
-            for (double y = ymin; y <= ymax; y += vstep)
-            {
-                yaxis_geom.Children.Add(new LineGeometry(
-                    new Point(xmin - margin / 2, y),
-                    new Point(xmin + margin / 2, y)));
-            }
             System.Windows.Shapes.Path yaxis_path = new System.Windows.Shapes.Path();
             yaxis_path.StrokeThickness = 1;
             yaxis_path.Stroke = Brushes.Black;
@@ -114,14 +122,10 @@ namespace SLSM
             canGraph.Children.Add(yaxis_path);
             //Draw the data set
             PointCollection points = new PointCollection();
-            totalSpending = 0;
             for (int i = 0; i < numEntries; i++)
             {
-                totalSpending += spendingAmount[i];
-                points.Add(new Point(days[i] + xmin, ymax - vstep/100 * totalSpending));
-                cumSpendingAmount[i] = totalSpending;
+                points.Add(new Point(days[i] * hstep + xmin, ymax - cumSpendingAmount[i] * vstep));
             }
-            txtAmount.Text = totalSpending.ToString("C", new CultureInfo("en-US"));
             Brush brush1 = Brushes.Red;
             Polyline polyline = new Polyline();
             polyline.StrokeThickness = 2;
@@ -129,6 +133,20 @@ namespace SLSM
             polyline.Points = points;
             canGraph.Children.Add(polyline);
         }
+        private void drawVertLine(double x)
+        {
+            slrRate.Minimum = 0;
+            slrRate.Maximum = numEntries - 1;
+            GeometryGroup slider_geom = new GeometryGroup();
+            slider_geom.Children.Add(new LineGeometry(
+                new Point(x * hstep + xmin, ymin), new Point(x * hstep + xmin, ymax)));
+            System.Windows.Shapes.Path slider_path = new System.Windows.Shapes.Path();
+            slider_path.StrokeThickness = 1;
+            slider_path.Stroke = Brushes.DarkGray;
+            slider_path.Data = slider_geom;
+            canGraph.Children.Add(slider_path);
+        }
+
         private void readPriceByBrand()
         {
             using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "priceByBrand.txt"))) //read from file, capture last entry
@@ -161,22 +179,24 @@ namespace SLSM
             using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "dates.txt")))
             {
                 string line;
-                int i = 0;
                 while ((line = sr.ReadLine()) != "" && line != null)
                 {
                     string[] entries = line.Split(",");
-                    dates[i]=DateTime.ParseExact(entries[0].Trim(),"d",culture);
+                    dates[numEntries]=DateTime.ParseExact(entries[0].Trim(),"d",culture);
                     entries = entries.Skip(1).ToArray();
                     float sum = 0;
                     foreach (string entry in entries)
                     {
                         sum += float.Parse(entry.Trim());
                     }
-                    spendingAmount[i] = sum;
-                    i++;
+                    spendingAmount[numEntries] = sum;
+                    numEntries++;
                 }
-                numEntries = i;
                 sr.Close();
+                if (dates[numEntries - 1] != DateTime.Now)
+                {
+                    dates[numEntries] = DateTime.Now.Date;
+                }
             }
             convertDatesToDays(dates);
             return;
@@ -371,6 +391,15 @@ namespace SLSM
             }
         }
 
+        private void slrRate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double day = double.Parse(slrRate.Value.ToString());
+            canGraph.Children.Clear();
+            initGraph();
+            drawVertLine(day);
+            txtDay.Text = slrRate.Value.ToString();
+            txtRate.Text = findSpendingAmountPerDay(day).ToString("C", new CultureInfo("en-US"));
+        }
     }//end class
 
 }
