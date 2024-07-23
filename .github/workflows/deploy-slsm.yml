@@ -5,8 +5,7 @@ on:
   tags: 
   - SLSM/v*
 env: 
-	ProjectPath: 
-	- D:/WPF/SLSM/SLSM.csproj
+	ProjectPath: D:/WPF/SLSM/SLSM.csproj
 jobs:
 	deploy:
 		runs-on: windows-latest
