@@ -35,8 +35,7 @@ namespace SLSM
     public partial class MainWindow : Window
     {
         //path to text files
-        string path = System.IO.Path.GetDirectoryName(
-                System.Reflection.Assembly.GetEntryAssembly().Location);
+        string path = Directory.GetCurrentDirectory();
         static int numBrands = 12;
         static int numDays = 365;
         int entryNumber;
@@ -90,25 +89,24 @@ namespace SLSM
         private double findSpendingAmountPerDay(double sliderValue)
         {
             int nearestDay = (int)Math.Round(sliderValue);
-            if (nearestDay == 0)
+            if (nearestDay == 0 || entryNumber == 0)
             {
                 return 0;
-            }
-            int i = 0;
-            if (entryNumber != 0)
+            } else if (nearestDay > days[entryNumber - 1])
             {
+                return cumSpendingAmount[entryNumber - 1] / nearestDay;
+            } else {
+                int i = 0;
                 while (days[i] < nearestDay)
                 {
                     i++;
                 }
-                if (days[i] == nearestDay)
+                if (days[i] != nearestDay)
                 {
-                    return cumSpendingAmount[i] / nearestDay;
+                    return cumSpendingAmount[i - 1] / nearestDay;
                 }
-                return cumSpendingAmount[i - 1] / nearestDay;
+                return cumSpendingAmount[i] / nearestDay;
             }
-            return 0;
-            
         }
         private void initGraph()
         {
@@ -116,7 +114,7 @@ namespace SLSM
             totalSpending = 0;
             if (entryNumber != 0 && DateTime.Today.Date != dates[entryNumber - 1])
             {
-                totalDays = (DateTime.Today.Date - dates[0]).Days;
+                totalDays = (DateTime.Today.Date - dates[0]).Days + 1;
             } else if (entryNumber != 0)
             {
                 totalDays = days[entryNumber - 1];
@@ -147,7 +145,7 @@ namespace SLSM
             // Make the Y ayis.
             GeometryGroup yaxis_geom = new GeometryGroup();
             yaxis_geom.Children.Add(new LineGeometry(
-                new Point(xmin, ymin), new Point(xmin, ymax)));
+                new Point(xmin, 0), new Point(xmin, ymax)));
             System.Windows.Shapes.Path yaxis_path = new System.Windows.Shapes.Path();
             yaxis_path.StrokeThickness = 1;
             yaxis_path.Stroke = Brushes.Black;
@@ -176,7 +174,7 @@ namespace SLSM
             slrRate.Maximum = totalDays;
             GeometryGroup slider_geom = new GeometryGroup();
             slider_geom.Children.Add(new LineGeometry(
-                new Point(xmin + x * hstep, ymin), new Point(xmin + x * hstep, ymax)));
+                new Point(xmin + x * hstep, 0), new Point(xmin + x * hstep, ymax)));
             System.Windows.Shapes.Path slider_path = new System.Windows.Shapes.Path();
             slider_path.StrokeThickness = 1;
             slider_path.Stroke = Brushes.DarkGray;
