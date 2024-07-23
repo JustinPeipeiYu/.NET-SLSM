@@ -23,7 +23,7 @@ uses: csexton/release-asset-action@v2
 with: 
 github-token: ${{ secrets.github_token }}
 pattern: D:/WPF/SLSM/bin/Release/net8.0-windows/win-x64/publish/*exe
-release-url: ${{steps.create_release.outputs.upload_url}}
+release-url: ${{ steps.create_release.outputs.upload_url }}
 				
 					
 
