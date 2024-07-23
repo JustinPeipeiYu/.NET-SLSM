@@ -1,5 +1,4 @@
----
-name: "deploy slsm"
+name: "deploy-slsm"
 on: 
 push: 
 tags: slsm/v*
