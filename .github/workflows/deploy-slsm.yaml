@@ -10,8 +10,6 @@ runs-on: windows-latest
 steps: 
 - uses: actions/checkout@v2
 - uses: actions/setup-dotnet@v1
-with:
-	dotnet-version: 8.0.X
 - run: dotnet build ${{ env.project_path }} -c Release 
 - run: dotnet publish ${{ env.project_path }} -c Release --self-contained -r win-x64 -p:PublishSingleFile=True 
 - uses: actions/create-release@v1
