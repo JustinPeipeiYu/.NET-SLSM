@@ -4,7 +4,7 @@ on:
  push: 
   tags: SLSM/v*
 env: 
-	ProjectPath: D:/WPF/SLSM/SLSM.csproj
+	ProjectPath: D:\WPF\SLSM\SLSM.csproj
 jobs:
 	deploy:
 		runs-on: windows-latest
@@ -26,7 +26,7 @@ jobs:
 			-uses: csexton/release-asset-action@v2
 			 with: 
 				github-token: ${{secrets.GithubToken}}
-				pattern: D:/WPF/SLSM/bin/Release/net8.0-windows/win-x64/publish/*exe
+				pattern: D:\WPF\SLSM\bin\Release\net8.0-windows\win-x64\publish\*exe
 				release-url: ${{steps.create_release.outputs.upload_url}}
 				
 					
