@@ -1,9 +1,9 @@
-name: "deploy slsm"
+name: "deploy-slsm"
 
 on: 
-  push: 
-	 tag:
-	   - "slsm/v*"
+ push: 
+  tags:
+	- "slsm/v*"
 env: 
 	PROJECT_PATH: SLSM/SLSM.csproj
 jobs:
