@@ -37,19 +37,21 @@ namespace SLSM
         //path to text files
         string path = System.IO.Path.GetDirectoryName(
                 System.Reflection.Assembly.GetEntryAssembly().Location);
-        static int numBrands = 11;
+        static int numBrands = 12;
         static int numDays = 365;
-        int entryNumber=0;
+        int entryNumber;
         float totalSpending;
         /*ARRAYS TO STORE DATASETS AND USER DATA*/
         int[] days = new int[numDays];
         DateTime[] dates = new DateTime[numDays];
-        string[] brands = new string[numBrands];
-        float[] standardPrices = new float[numBrands];
-        float[] largePrices = new float[numBrands];
+        string[] brands = ["Benson and Hedges", "Canadian Classics", "Du Maurier", 
+            "Export A", "John Player Special","LD", "Macdonald Select",
+            "Marlboro","Matinee","NEXT","Number 7","Pall Mall"];
+        double[] standardPrices = [17.5, 15.75, 18.6, 17.5, 14.75, 14.5, 14.25, 14.4, 14.5, 14.5, 14.25, 14.5];
+        double[] largePrices = [21.5, 18.75, 22.6, 21.5, 17.75, 17.5, 18.25, 17.91, 18.5, 18.5, 18.25, 17.5];
         float[] spendingAmount = new float[numDays];
         float[] cumSpendingAmount = new float[numDays];
-        Dictionary<string, Tuple<float, float>> inventory = new Dictionary<string, Tuple<float, float>>();
+        Dictionary<string, Tuple<double, double>> inventory = new Dictionary<string, Tuple<double, double>>();
 
         /*VARIABLES FOR GRAPH*/
         const double margin = 10;
@@ -71,9 +73,9 @@ namespace SLSM
         /*MAIN PROGRAM*/
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            readDates();
             // Handle opening logic
-            readPriceByBrand();
+            populateInventory();
+            readDates();
             initGraph();
             updateTextBoxes(0);
         }
@@ -93,22 +95,37 @@ namespace SLSM
                 return 0;
             }
             int i = 0;
-            while (days[i] < nearestDay)
+            if (entryNumber != 0)
             {
-                i++;
+                while (days[i] < nearestDay)
+                {
+                    i++;
+                }
+                if (days[i] == nearestDay)
+                {
+                    return cumSpendingAmount[i] / nearestDay;
+                }
+                return cumSpendingAmount[i - 1] / nearestDay;
             }
-            if (days[i] == nearestDay)
-            {
-                return cumSpendingAmount[i]/nearestDay;
-            }
-            return cumSpendingAmount[i-1]/nearestDay;
+            return 0;
+            
         }
         private void initGraph()
         {
             //calculate dataset y values
             totalSpending = 0;
-            totalDays = days[entryNumber];
-            for (int i = 0; i <= entryNumber; i++)
+            if (entryNumber != 0 && DateTime.Today.Date != dates[entryNumber - 1])
+            {
+                totalDays = (DateTime.Today.Date - dates[0]).Days;
+            } else if (entryNumber != 0)
+            {
+                totalDays = days[entryNumber - 1];
+            } else
+            {
+                totalDays = 0;
+            }
+            
+            for (int i = 0; i < entryNumber; i++)
             {
                 totalSpending += spendingAmount[i];
                 cumSpendingAmount[i] = totalSpending;
@@ -138,9 +155,13 @@ namespace SLSM
             canGraph.Children.Add(yaxis_path);
             //Draw the data set
             PointCollection points = new PointCollection();
-            for (int i = 0; i <= entryNumber; i++)
+            points.Add(new Point(xmin, ymax));
+            for (int i = 0; i < entryNumber; i++)
             {
                 points.Add(new Point(xmin + days[i] * hstep, ymax - cumSpendingAmount[i] * vstep));
+            }
+            if (entryNumber != 0 && totalDays != days[entryNumber - 1]) {
+                points.Add(new Point(xmin + totalDays * hstep, ymax - cumSpendingAmount[entryNumber - 1] * vstep));
             }
             Brush brush1 = Brushes.Red;
             Polyline polyline = new Polyline();
@@ -152,7 +173,7 @@ namespace SLSM
         private void drawVertLine(double x)
         {
             slrRate.Minimum = 0;
-            slrRate.Maximum = days[entryNumber];
+            slrRate.Maximum = totalDays;
             GeometryGroup slider_geom = new GeometryGroup();
             slider_geom.Children.Add(new LineGeometry(
                 new Point(xmin + x * hstep, ymin), new Point(xmin + x * hstep, ymax)));
@@ -167,67 +188,52 @@ namespace SLSM
             txtDay.Text = slrRate.Value.ToString();
             txtRate.Text = findSpendingAmountPerDay(day).ToString("C", new CultureInfo("en-US"));
         }
-        private void readPriceByBrand()
-        {
-            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "priceByBrand.txt"))) //read from file, capture last entry
-            {
-                string line;
-                for (int i = 0; i < numBrands; i++)
-                {
-                    line = sr.ReadLine();
-                    string[] entries = line.Split(",");
-                    brands[i]=entries[0].Trim();
-                    standardPrices[i]=float.Parse(entries[1].Trim());
-                    largePrices[i]=float.Parse(entries[2].Trim());
-                }
-                sr.Close();
-            }
-            populateInventory();
-            return;
-        }
         private void convertDatesToDays(DateTime[] dates)
         {
-            days[0]=0;
-            for (int i = 1; i <= entryNumber; i++)
+            days[0]=1;
+            for (int i = 1; i < entryNumber; i++)
             {
                 days[i]=(dates[i].Date - dates[0].Date).Days + 1;
             } 
         }
         private void readDates()
         {
-            //reads the text file with dates and spending amounts 
-            using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "dates.txt")))
-            {
-                string line;
-                while ((line = sr.ReadLine()) != "" && line != null)
+            entryNumber = 0;
+            if (File.Exists(System.IO.Path.Combine(path, "dates.txt")))
+            {//reads the text file with dates and spending amounts 
+                using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "dates.txt")))
                 {
-                    string[] entries = line.Split(",");
-                    dates[entryNumber]=DateTime.ParseExact(entries[0].Trim(),"d",culture);
-                    entries = entries.Skip(1).ToArray();
-                    float sum = 0;
-                    foreach (string entry in entries)
+                    string line;
+                    while ((line = sr.ReadLine()) != "" && line != null)
                     {
-                        sum += float.Parse(entry.Trim());
+                        string[] entries = line.Split(",");
+                        dates[entryNumber] = DateTime.ParseExact(entries[0].Trim(), "d", culture);
+                        entries = entries.Skip(1).ToArray();
+                        float sum = 0;
+                        foreach (string entry in entries)
+                        {
+                            sum += float.Parse(entry.Trim());
+                        }
+                        spendingAmount[entryNumber] = sum;
+                        entryNumber++;
                     }
-                    spendingAmount[entryNumber] = sum;
-                    entryNumber++;
+                    sr.Close();
                 }
-                sr.Close();
-                //if last entry was not today, then add today to list of dates
-                //since default spending amount values are 0,
-                //do not need to include update spending amount value
-                if (dates[entryNumber-1] != DateTime.Now.Date)
+                convertDatesToDays(dates);
+            }
+            else//create file
+            {
+                using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "dates.txt")))
                 {
-                    dates[entryNumber] = DateTime.Now.Date;
+                    sw.Write("");
+                    sw.Close();
                 }
             }
-            convertDatesToDays(dates);
-            return;
         }
         private void populateInventory()
         {
             for (int i = 0; i < numBrands; i++) {
-                inventory[brands[i]] = new Tuple<float, float>(standardPrices[i], largePrices[i]);
+                inventory[brands[i]] = new Tuple<double, double>(standardPrices[i], largePrices[i]);
             }
         }
 
@@ -250,8 +256,7 @@ namespace SLSM
                 //if the file is not blank, write date on new line
                 if (entryNumber > 0)
                 {
-                    //if the last date entry was today, do not write new date
-                    if (dates[entryNumber].Equals(DateTime.Today.Date))
+                    if (dates[entryNumber-1].Equals(DateTime.Today.Date))
                     {
                         sw.Close();
                         return;
@@ -312,6 +317,11 @@ namespace SLSM
                     MessageBox.Show("Changes were saved.");
                     //update program variables
                     readDates();
+                    double day = double.Parse(slrRate.Value.ToString());
+                    canGraph.Children.Clear();
+                    initGraph();
+                    drawVertLine(day);
+                    updateTextBoxes(day);
                     break;
                 case MessageBoxResult.No:
                     break;
@@ -407,6 +417,11 @@ namespace SLSM
                         MessageBox.Show("Changes were saved.");
                         //update program variables
                         readDates();
+                        double day = double.Parse(slrRate.Value.ToString());
+                        canGraph.Children.Clear();
+                        initGraph();
+                        drawVertLine(day);
+                        updateTextBoxes(day);
                         break;
                     case MessageBoxResult.No:
                         break;
