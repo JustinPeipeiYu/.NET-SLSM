@@ -39,7 +39,7 @@ namespace SLSM
                 System.Reflection.Assembly.GetEntryAssembly().Location);
         static int numBrands = 11;
         static int numDays = 365;
-        int numEntries=0;
+        int entryNumber=0;
         float totalSpending;
         /*ARRAYS TO STORE DATASETS AND USER DATA*/
         int[] days = new int[numDays];
@@ -59,6 +59,7 @@ namespace SLSM
         double ymax;
         double hstep;
         double vstep;
+        double totalDays;
 
         //sizeIndex stores price from inventory (sizeIndex = 0 is small, sizeIndex = 1 is large)
         int sizeIndex = -1;
@@ -74,6 +75,7 @@ namespace SLSM
             // Handle opening logic
             readPriceByBrand();
             initGraph();
+            updateTextBoxes(0);
         }
         private void OnWindowClosing(object sender, CancelEventArgs e)
         {
@@ -86,13 +88,27 @@ namespace SLSM
         private double findSpendingAmountPerDay(double sliderValue)
         {
             int nearestDay = (int)Math.Round(sliderValue);
-            return cumSpendingAmount[nearestDay]/(nearestDay+1);
+            if (nearestDay == 0)
+            {
+                return 0;
+            }
+            int i = 0;
+            while (days[i] < nearestDay)
+            {
+                i++;
+            }
+            if (days[i] == nearestDay)
+            {
+                return cumSpendingAmount[i]/nearestDay;
+            }
+            return cumSpendingAmount[i-1]/nearestDay;
         }
         private void initGraph()
         {
             //calculate dataset y values
             totalSpending = 0;
-            for (int i = 0; i < numEntries; i++)
+            totalDays = days[entryNumber];
+            for (int i = 0; i <= entryNumber; i++)
             {
                 totalSpending += spendingAmount[i];
                 cumSpendingAmount[i] = totalSpending;
@@ -100,8 +116,8 @@ namespace SLSM
             //define dimensions
             ymax = canGraph.Height - margin;
             xmax = canGraph.Width + margin;
-            hstep = (xmax - xmin) / (numEntries - 1);
-            vstep = (ymax - ymin )/ cumSpendingAmount[numEntries - 1];
+            hstep = (xmax - xmin) / totalDays;
+            vstep = (ymax - ymin )/ totalSpending;
             // Make the X axis.
             GeometryGroup xaxis_geom = new GeometryGroup();
             xaxis_geom.Children.Add(new LineGeometry(
@@ -122,9 +138,9 @@ namespace SLSM
             canGraph.Children.Add(yaxis_path);
             //Draw the data set
             PointCollection points = new PointCollection();
-            for (int i = 0; i < numEntries; i++)
+            for (int i = 0; i <= entryNumber; i++)
             {
-                points.Add(new Point(days[i] * hstep + xmin, ymax - cumSpendingAmount[i] * vstep));
+                points.Add(new Point(xmin + days[i] * hstep, ymax - cumSpendingAmount[i] * vstep));
             }
             Brush brush1 = Brushes.Red;
             Polyline polyline = new Polyline();
@@ -136,17 +152,21 @@ namespace SLSM
         private void drawVertLine(double x)
         {
             slrRate.Minimum = 0;
-            slrRate.Maximum = numEntries - 1;
+            slrRate.Maximum = days[entryNumber];
             GeometryGroup slider_geom = new GeometryGroup();
             slider_geom.Children.Add(new LineGeometry(
-                new Point(x * hstep + xmin, ymin), new Point(x * hstep + xmin, ymax)));
+                new Point(xmin + x * hstep, ymin), new Point(xmin + x * hstep, ymax)));
             System.Windows.Shapes.Path slider_path = new System.Windows.Shapes.Path();
             slider_path.StrokeThickness = 1;
             slider_path.Stroke = Brushes.DarkGray;
             slider_path.Data = slider_geom;
             canGraph.Children.Add(slider_path);
         }
-
+        private void updateTextBoxes(double day)
+        {
+            txtDay.Text = slrRate.Value.ToString();
+            txtRate.Text = findSpendingAmountPerDay(day).ToString("C", new CultureInfo("en-US"));
+        }
         private void readPriceByBrand()
         {
             using (StreamReader sr = new StreamReader(System.IO.Path.Combine(path, "priceByBrand.txt"))) //read from file, capture last entry
@@ -168,9 +188,9 @@ namespace SLSM
         private void convertDatesToDays(DateTime[] dates)
         {
             days[0]=0;
-            for (int i = 1; i < numEntries; i++)
+            for (int i = 1; i <= entryNumber; i++)
             {
-                days[i]=(dates[i].Date - dates[0].Date).Days;
+                days[i]=(dates[i].Date - dates[0].Date).Days + 1;
             } 
         }
         private void readDates()
@@ -182,20 +202,23 @@ namespace SLSM
                 while ((line = sr.ReadLine()) != "" && line != null)
                 {
                     string[] entries = line.Split(",");
-                    dates[numEntries]=DateTime.ParseExact(entries[0].Trim(),"d",culture);
+                    dates[entryNumber]=DateTime.ParseExact(entries[0].Trim(),"d",culture);
                     entries = entries.Skip(1).ToArray();
                     float sum = 0;
                     foreach (string entry in entries)
                     {
                         sum += float.Parse(entry.Trim());
                     }
-                    spendingAmount[numEntries] = sum;
-                    numEntries++;
+                    spendingAmount[entryNumber] = sum;
+                    entryNumber++;
                 }
                 sr.Close();
-                if (dates[numEntries - 1] != DateTime.Now)
+                //if last entry was not today, then add today to list of dates
+                //since default spending amount values are 0,
+                //do not need to include update spending amount value
+                if (dates[entryNumber-1] != DateTime.Now.Date)
                 {
-                    dates[numEntries] = DateTime.Now.Date;
+                    dates[entryNumber] = DateTime.Now.Date;
                 }
             }
             convertDatesToDays(dates);
@@ -225,10 +248,10 @@ namespace SLSM
             using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "dates.txt"), true))
             {
                 //if the file is not blank, write date on new line
-                if (numEntries > 0)
+                if (entryNumber > 0)
                 {
                     //if the last date entry was today, do not write new date
-                    if (dates[numEntries].Equals(DateTime.Today.Date))
+                    if (dates[entryNumber].Equals(DateTime.Today.Date))
                     {
                         sw.Close();
                         return;
@@ -397,8 +420,7 @@ namespace SLSM
             canGraph.Children.Clear();
             initGraph();
             drawVertLine(day);
-            txtDay.Text = slrRate.Value.ToString();
-            txtRate.Text = findSpendingAmountPerDay(day).ToString("C", new CultureInfo("en-US"));
+            updateTextBoxes(day);
         }
     }//end class
 
