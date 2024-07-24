@@ -6,7 +6,7 @@ on:
       - "slsm/v*"
 
 env:
-  PROJECT_PATH: SLSM.csproj
+  PROJECT_PATH: SLSM/SLSM.csproj
 
 jobs:
   deploy:
@@ -35,6 +35,6 @@ jobs:
       - uses: csexton/release-asset-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          pattern: bin/Release/net8.0-windows/win-x64/*.exe
+          pattern: SLSM/bin/Release/net8.0-windows/win-x64/*.exe
           release-url: ${{ steps.create_release.outputs.upload_url }}
 
