@@ -36,21 +36,20 @@ namespace SLSM
     {
         //path to text files
         string path = Directory.GetCurrentDirectory();
-        static int numBrands = 12;
+        //variables for size of array
         static int numDays = 365;
+        //variable for number of line entries in text file
         int entryNumber;
+        //variable for total spending
         float totalSpending;
         /*ARRAYS TO STORE DATASETS AND USER DATA*/
         int[] days = new int[numDays];
         DateTime[] dates = new DateTime[numDays];
-        string[] brands = ["Benson and Hedges", "Canadian Classics", "Du Maurier", 
-            "Export A", "John Player Special","LD", "Macdonald Select",
-            "Marlboro","Matinee","NEXT","Number 7","Pall Mall"];
-        double[] standardPrices = [17.5, 15.75, 18.6, 17.5, 14.75, 14.5, 14.25, 14.4, 14.5, 14.5, 14.25, 14.5];
-        double[] largePrices = [21.5, 18.75, 22.6, 21.5, 17.75, 17.5, 18.25, 17.91, 18.5, 18.5, 18.25, 17.5];
         float[] spendingAmount = new float[numDays];
         float[] cumSpendingAmount = new float[numDays];
-        Dictionary<string, Tuple<double, double>> inventory = new Dictionary<string, Tuple<double, double>>();
+        
+        //Dictionary of cigarette prices by brand
+        Dictionary<string, double[]> inventory = new Dictionary<string, double[]>{{ "Benson and Hedges", [17.5, 21.5]},{ "Canadian Classics", [15.75, 18.75] }, { "Du Maurier", [18.6, 22.6] }, { "Export A", [17.5, 21.5] }, { "John Player Special", [14.75, 17.75] }, { "LD", [14.5, 17.5] }, { "Macdonald Select", [14.25, 18.25] }, { "Marlboro" , [14.4, 17.91] }, { "Matinee" , [14.5, 18.5] }, { "NEXT", [14.5, 18.5] }, { "Number 7" , [14.25, 18.25] }, { "Pall Mall", [14.5, 17.5] } };
 
         /*VARIABLES FOR GRAPH*/
         const double margin = 10;
@@ -62,25 +61,25 @@ namespace SLSM
         double vstep;
         double totalDays;
 
-        //sizeIndex stores price from inventory (sizeIndex = 0 is small, sizeIndex = 1 is large)
+        //variable for slider value
+        double sldDay;
+
+        //sizeIndex to choose price from inventory (sizeIndex = 0 is small price, sizeIndex = 1 is large price)
         int sizeIndex = -1;
         string brandSelected = "";
 
-        //datetime culture
-        CultureInfo culture = new CultureInfo("en-US");
+        //datetime constant
+        static CultureInfo culture = new CultureInfo("en-US");
 
         /*MAIN PROGRAM*/
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // Handle opening logic
-            populateInventory();
             readDates();
+            updateSpendingAmounts();
             initGraph();
+            //takes integer parameter sldDay
             updateTextBoxes(0);
-        }
-        private void OnWindowClosing(object sender, CancelEventArgs e)
-        {
-            // Handle closing logic, set e.Cancel as needed
         }
 
         /*CUSTOM FUNCTIONS*/
@@ -108,10 +107,19 @@ namespace SLSM
                 return cumSpendingAmount[i] / nearestDay;
             }
         }
+        void updateSpendingAmounts()
+        {
+            //recalculate total spending
+            totalSpending = 0;
+            for (int i = 0; i < entryNumber; i++)
+            {
+                totalSpending += spendingAmount[i];
+                cumSpendingAmount[i] = totalSpending;
+            }
+        }
         private void initGraph()
         {
             //calculate dataset y values
-            totalSpending = 0;
             if (entryNumber != 0 && DateTime.Today.Date != dates[entryNumber - 1])
             {
                 totalDays = (DateTime.Today.Date - dates[0]).Days + 1;
@@ -121,12 +129,6 @@ namespace SLSM
             } else
             {
                 totalDays = 0;
-            }
-            
-            for (int i = 0; i < entryNumber; i++)
-            {
-                totalSpending += spendingAmount[i];
-                cumSpendingAmount[i] = totalSpending;
             }
             //define dimensions
             ymax = canGraph.Height - margin;
@@ -228,12 +230,6 @@ namespace SLSM
                 }
             }
         }
-        private void populateInventory()
-        {
-            for (int i = 0; i < numBrands; i++) {
-                inventory[brands[i]] = new Tuple<double, double>(standardPrices[i], largePrices[i]);
-            }
-        }
 
         private MessageBoxResult confirmSubmission()
         {
@@ -278,14 +274,14 @@ namespace SLSM
                 /*NOTE: writing to text file requires literal path instead of variable path*/
                 using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "dates.txt"),true))
                 {
-                    sw.Write(","+inventory[brandName].Item1);
+                    sw.Write("," + inventory[brandName][0]);
                     sw.Close();
                 }
             } else
             {
                 using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(path, "dates.txt"), true))
                 {
-                    sw.Write(","+inventory[brandName].Item2);
+                    sw.Write("," + inventory[brandName][1]);
                     sw.Close();
                 }
             }
@@ -313,13 +309,16 @@ namespace SLSM
                     writeDate();
                     writePrice(brandSelected, sizeIndex);
                     MessageBox.Show("Changes were saved.");
-                    //update program variables
+                    //read new data into program
                     readDates();
-                    double day = double.Parse(slrRate.Value.ToString());
+                    //update program variables
+                    sldDay = double.Parse(slrRate.Value.ToString());
+                    updateSpendingAmounts();
+                    //update display
                     canGraph.Children.Clear();
                     initGraph();
-                    drawVertLine(day);
-                    updateTextBoxes(day);
+                    drawVertLine(sldDay);
+                    updateTextBoxes(sldDay);
                     break;
                 case MessageBoxResult.No:
                     break;
@@ -413,13 +412,16 @@ namespace SLSM
                         writeDate();
                         writePrice(brandSelected, sizeIndex);
                         MessageBox.Show("Changes were saved.");
-                        //update program variables
+                        //read new data into program
                         readDates();
-                        double day = double.Parse(slrRate.Value.ToString());
+                        //update program variables
+                        sldDay = double.Parse(slrRate.Value.ToString());
+                        updateSpendingAmounts();
+                        //update display
                         canGraph.Children.Clear();
                         initGraph();
-                        drawVertLine(day);
-                        updateTextBoxes(day);
+                        drawVertLine(sldDay);
+                        updateTextBoxes(sldDay);
                         break;
                     case MessageBoxResult.No:
                         break;
@@ -429,11 +431,11 @@ namespace SLSM
 
         private void slrRate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            double day = double.Parse(slrRate.Value.ToString());
+            sldDay = double.Parse(slrRate.Value.ToString());
             canGraph.Children.Clear();
             initGraph();
-            drawVertLine(day);
-            updateTextBoxes(day);
+            drawVertLine(sldDay);
+            updateTextBoxes(sldDay);
         }
     }//end class
 
