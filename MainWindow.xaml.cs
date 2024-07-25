@@ -37,7 +37,7 @@ namespace SLSM
         //path to text files
         string path = Directory.GetCurrentDirectory();
         //variables for size of array
-        static int numDays = 365;
+        static int numDays = 1100;
         //variable for number of line entries in text file
         int entryNumber;
         //variable for total spending
