@@ -60,6 +60,8 @@ namespace SLSM
         double hstep;
         double vstep;
         double totalDays;
+        int zIndex; //index in array of entry with the nearest day to the slider's day 
+        double pointY;//only to store the y values of graph point at zIndex
 
         //variable for slider value
         double sldDay;
@@ -79,35 +81,62 @@ namespace SLSM
             updateSpendingAmounts();
             initGraph();
             //takes integer parameter sldDay
-            updateTextBoxes(0);
+            updateTextBoxes();
+            displayLabel();
         }
 
         /*CUSTOM FUNCTIONS*/
 
         //find spending amount
-        private double findSpendingAmountPerDay(double sliderValue)
+        private double findSpendingAmountPerDay(bool rate)
         {
-            int nearestDay = (int)Math.Round(sliderValue);
+            int nearestDay = (int)Math.Round(sldDay);
             if (nearestDay == 0 || entryNumber == 0)
             {
                 return 0;
             } else if (nearestDay > days[entryNumber - 1])
             {
-                return cumSpendingAmount[entryNumber - 1] / nearestDay;
+                if (rate)
+                {
+                    return cumSpendingAmount[entryNumber - 1] / nearestDay;
+                }
+                else
+                {
+                    return cumSpendingAmount[entryNumber - 1];
+                }
+                
             } else {
-                int i = 0;
-                while (days[i] < nearestDay)
+                zIndex = 0;
+                while (days[zIndex] < nearestDay)
                 {
-                    i++;
+                    zIndex++;
                 }
-                if (days[i] != nearestDay)
+                if (zIndex != 0)//if zIndex is not first element of array, then we must added an extra index
                 {
-                    return cumSpendingAmount[i - 1] / nearestDay;
+                    zIndex--;
                 }
-                return cumSpendingAmount[i] / nearestDay;
+                if (days[zIndex] != nearestDay)
+                {
+                    if (rate)
+                    {
+                        return cumSpendingAmount[zIndex] / nearestDay;
+                    } else
+                    {
+                        return cumSpendingAmount[zIndex];
+                    }
+                }else
+                {
+                    if (rate)
+                    {
+                        return cumSpendingAmount[zIndex] / nearestDay;
+                    }
+                    else
+                    {
+                        return cumSpendingAmount[zIndex];
+                    }
+                }
             }
         }
-
         void updateSpendingAmounts()
         {
             //recalculate total spending
@@ -155,44 +184,60 @@ namespace SLSM
             yaxis_path.Data = yaxis_geom;
             canGraph.Children.Add(yaxis_path);
             //Draw the data set
-            PointCollection points = new PointCollection();
+            PointCollection points = new PointCollection(); //points of the graph
             points.Add(new Point(xmin, ymax));
             for (int i = 0; i < entryNumber; i++)
             {
                 points.Add(new Point(xmin + days[i] * hstep, ymax - cumSpendingAmount[i] * vstep));
+                if (entryNumber != 0 && i == zIndex)
+                {
+                    pointY = ymax - cumSpendingAmount[i] * vstep;
+                }
             }
             if (entryNumber != 0 && totalDays != days[entryNumber - 1]) {
                 points.Add(new Point(xmin + totalDays * hstep, ymax - cumSpendingAmount[entryNumber - 1] * vstep));
             }
-            Brush brush1 = Brushes.Red;
+            Brush brush1 = Brushes.LightBlue;
             Polyline polyline = new Polyline();
             polyline.StrokeThickness = 2;
             polyline.Stroke = brush1;
             polyline.Points = points;
             canGraph.Children.Add(polyline);
         }
-        private void drawVertLine(double x)
+        private void displayLabel()
+        {
+            //position and display label
+            TextBox graphLabel = new TextBox();
+            double pointX = xmin + sldDay * hstep;
+            pointX -= sldDay * 0.45;
+            graphLabel.IsReadOnly = true;
+            graphLabel.Text = findSpendingAmountPerDay(false).ToString("C", culture);
+            Canvas.SetLeft(graphLabel, pointX);
+            Canvas.SetTop(graphLabel, pointY - margin);
+            canGraph.Children.Add(graphLabel);
+        }
+        private void drawVertLine()
         {
             slrRate.Minimum = 0;
             slrRate.Maximum = totalDays;
             GeometryGroup slider_geom = new GeometryGroup();
             slider_geom.Children.Add(new LineGeometry(
-                new Point(xmin + x * hstep, 0), new Point(xmin + x * hstep, ymax)));
+                new Point(xmin + sldDay * hstep, 0), new Point(xmin + sldDay * hstep, ymax)));
             System.Windows.Shapes.Path slider_path = new System.Windows.Shapes.Path();
             slider_path.StrokeThickness = 1;
             slider_path.Stroke = Brushes.DarkGray;
             slider_path.Data = slider_geom;
             canGraph.Children.Add(slider_path);
         }
-        private void updateTextBoxes(double day)
+        private void updateTextBoxes()
         {
-            if (entryNumber >= 1 && day >= 1)
+            if (entryNumber >= 1 && sldDay >= 1)
             {
-                txtDay.Text = dates[0].AddDays(day - 1).ToString("D", culture);
-            } else if (day < 1){
+                txtDay.Text = dates[0].AddDays(sldDay - 1).ToString("D", culture);
+            } else if (sldDay < 1){
                 txtDay.Text = "";
             }
-            txtRate.Text = findSpendingAmountPerDay(day).ToString("C", culture);
+            txtRate.Text = findSpendingAmountPerDay(true).ToString("C", culture);
         }
         private void convertDatesToDays(DateTime[] dates)
         {
@@ -323,8 +368,9 @@ namespace SLSM
                     //update display
                     canGraph.Children.Clear();
                     initGraph();
-                    drawVertLine(sldDay);
-                    updateTextBoxes(sldDay);
+                    drawVertLine();
+                    displayLabel();
+                    updateTextBoxes();
                     break;
                 case MessageBoxResult.No:
                     break;
@@ -426,8 +472,9 @@ namespace SLSM
                         //update display
                         canGraph.Children.Clear();
                         initGraph();
-                        drawVertLine(sldDay);
-                        updateTextBoxes(sldDay);
+                        drawVertLine();
+                        displayLabel();
+                        updateTextBoxes();
                         break;
                     case MessageBoxResult.No:
                         break;
@@ -440,8 +487,9 @@ namespace SLSM
             sldDay = double.Parse(slrRate.Value.ToString());
             canGraph.Children.Clear();
             initGraph();
-            drawVertLine(sldDay);
-            updateTextBoxes(sldDay);
+            drawVertLine();
+            displayLabel();
+            updateTextBoxes();
         }
     }//end class
 
