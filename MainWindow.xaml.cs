@@ -107,6 +107,7 @@ namespace SLSM
                 return cumSpendingAmount[i] / nearestDay;
             }
         }
+
         void updateSpendingAmounts()
         {
             //recalculate total spending
@@ -133,7 +134,7 @@ namespace SLSM
             //define dimensions
             ymax = canGraph.Height - margin;
             xmax = canGraph.Width + margin;
-            hstep = (xmax - xmin) / totalDays;
+            hstep = (canGraph.Width - xmin) / totalDays;
             vstep = (ymax - ymin )/ totalSpending;
             // Make the X axis.
             GeometryGroup xaxis_geom = new GeometryGroup();
@@ -185,8 +186,13 @@ namespace SLSM
         }
         private void updateTextBoxes(double day)
         {
-            txtDay.Text = slrRate.Value.ToString();
-            txtRate.Text = findSpendingAmountPerDay(day).ToString("C", new CultureInfo("en-US"));
+            if (entryNumber >= 1 && day >= 1)
+            {
+                txtDay.Text = dates[0].AddDays(day - 1).ToString("D", culture);
+            } else if (day < 1){
+                txtDay.Text = "";
+            }
+            txtRate.Text = findSpendingAmountPerDay(day).ToString("C", culture);
         }
         private void convertDatesToDays(DateTime[] dates)
         {
